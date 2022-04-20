@@ -12,16 +12,16 @@ pipeline {
                 sh "mvn clean package sonar:sonar -Dsonar.host.url=http://192.168.56.102:9000"
             }
         }
-		stage('DeployToDevEnv') {
+		stage('imagebuild') {
 			steps {
-				sh "scp -o StrictHostKeyChecking=no  target/demo.war vagrant@192.168.56.103:/opt/tomcat/webapps/"
-				sh "ssh -o StrictHostKeyChecking=no  vagrant@192.168.56.103 sudo systemctl restart tomcat"
+				
+				sh "docker build -t ksksviss/tomcatjavaapp ."
 			}
 		}
-		stage('DeployToQAEnv') {
+		stage('publishimage') {
 			steps {
-				sh "scp -o StrictHostKeyChecking=no  target/demo.war vagrant@192.168.56.104:/opt/tomcat/webapps/"
-				sh "ssh -o StrictHostKeyChecking=no  vagrant@192.168.56.104 sudo systemctl restart tomcat"
+				
+				sh "docker push ksksviss/tomcatjavaapp"
 			}
 		}
     }
